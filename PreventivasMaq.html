@@ -1,0 +1,447 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Manutenção</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f49c;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background:url("https://media.licdn.com/dms/image/v2/D4D3DAQG21eNJpdZ0fQ/image-scale_191_1128/image-scale_191_1128/0/1732309685171/still_brasil_empilhadeira_cover?e=2147483647&v=beta&t=lLD15uNZ1WRKFjW-X3OE3VjEGt0EwBl6topHrsMkxDU") no-repeat center center;
+      color: white;
+      text-align: center;
+      padding: 50px 30px;
+    }
+    header h1 {
+      margin: 0;
+    }
+    main {
+      flex: 1;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2, h5 {
+      text-align: center;
+    }
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .reset-btn, .export-btn {
+      padding: 8px 15px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .reset-btn { background: #e67e22; }
+    .reset-btn:hover { background: #d35400; }
+    .export-btn:hover { background: #2980b9; }
+    .percentual {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #2c3e50;
+    }
+    .nav-buttons {
+        text-align: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+    .nav-buttons button {
+        padding: 10px 15px;
+        margin: 0;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        background: #f0f0f0;
+        cursor: pointer;
+    }
+    .nav-buttons button.active {
+        background: #2c3e50;
+        color: white;
+        border-color: #06101a79;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background: #2c3e50;
+      color: white;
+    }
+    button.acao {
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+      width: 120px;
+      transition: background 0.3s;
+    }
+    button.acao.concluido { background: #2ecc71; }
+    button.acao.a-realizar { background: #cf1602; }
+
+    input.horimetro, input.dataManut, input.osNum, input.tecnico, input.oleo {
+      width: 120px;
+      padding: 5px;
+      text-align: center;
+    }
+
+    .pesquisa {
+      margin: 10px 0;
+      text-align: center;
+    }
+    .pesquisa input {
+      width: 70%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    /* ALERTA DE ÓLEO */
+    .alerta {
+      background-color: #e74c3c !important;
+      color: white !important;
+      font-weight: bold;
+      th:nth-child(1), td:nth-child(1) { min-width: 800px; } /* Código da Máquina */
+ 
+
+      th:nth-child(1), td:nth-child(1) { min-width: 800px; } /* Código da Máquina */
+th:nth-child(2), td:nth-child(2) { width: 120px; }     /* Horímetro */
+th:nth-child(3), td:nth-child(3) { width: 100px; }     /* Nº O.S. */
+th:nth-child(4), td:nth-child(4) { width: 150px; }     /* Técnico */
+th:nth-child(5), td:nth-child(5) { width: 130px; }     /* Ação */
+th:nth-child(6), td:nth-child(6) { width: 120px; }     /* Data */
+th:nth-child(7), td:nth-child(7) { width: 130px; }     /* Troca de Óleo 01 */
+th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
+
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Controle de Manutenção Mensal</h1>
+  </header>
+
+  <main>
+    <div class="top-actions">
+      <button class="reset-btn" onclick="novaCompetencia()">➤ NOVO MÊS</button>
+      <button class="export-btn" onclick="exportarExcel()">⬇ Exportar Excel</button>
+      <div class="percentual" id="percentual">Preventivas concluídas: 0%</div>
+    </div>
+
+    <div class="pesquisa">
+      <input type="text" id="pesquisa" placeholder="🔍 Pesquisar por Máquina ou Técnico..." onkeyup="filtrarTabela()">
+    </div>
+
+    <div class="nav-buttons" id="nav-buttons"></div>
+
+    <h2 id="titulo-secao"></h2>
+    <h5>Desenvolvido Por Henrique Silva</h5>
+    <table>
+      <thead>
+        <tr>
+          <th>Código da Máquina</th>
+          <th>Horímetro</th>
+          <th>Nº O.S.</th>
+          <th>Técnico</th>
+          <th>Ação</th>
+          <th>Data</th>
+          <th>Troca de Óleo 01</th>
+          <th>Troca de Óleo 02</th>
+        </tr>
+      </thead>
+      <tbody id="tabela-maquinas"></tbody>
+    </table>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <script>
+    const todasAsMaquinas = [
+      "341930Y04383 FMX","341930Y04388 FMX","341930Y04390 FMX","341930Y04392 FMX","341930Y04394 FMX",
+      "341930Y04470 FMX","341930Y04480 FMX","340139Y02015 ERX","340139Y02017 ERX","340139Y02022 ERX",
+      "340139Y02129 ERX","340139Y02156 ERX","340139Y02158 ERX","340139Y02165 ERX","340139Y02185 ERX",
+      "340139Y02192 ERX","340139Y02205 ERX","341033E01096 ERX","348044Y01131 GLP","348044Y01132 GLP",
+      "348044Y01130 GLP","340129E03260 EGU","MAQ-TESTE-01","MAQ-TESTE-02","MAQ-TESTE-03","MAQ-TESTE-04"
+      ,"MAQ-TESTE-05","MAQ-TESTE-06","MAQ-TESTE-07","MAQ-TESTE-08","MAQ-TESTE-09","MAQ-TESTE-10","MAQ-TESTE-11","MAQ-TESTE-12","MAQ-TESTE-13","MAQ-TESTE-14"
+      ,"MAQ-TESTE-15","MAQ-TESTE-16","MAQ-TESTE-17","MAQ-TESTE-18","MAQ-TESTE-19","MAQ-TESTE-20",
+"MAQ-TESTE-21","MAQ-TESTE-22","MAQ-TESTE-23","MAQ-TESTE-24","MAQ-TESTE-25","MAQ-TESTE-26","MAQ-TESTE-27","MAQ-TESTE-28","MAQ-TESTE-29","MAQ-TESTE-30",
+"MAQ-TESTE-31","MAQ-TESTE-32","MAQ-TESTE-33","MAQ-TESTE-34","MAQ-TESTE-35","MAQ-TESTE-36","MAQ-TESTE-37","MAQ-TESTE-38","MAQ-TESTE-39","MAQ-TESTE-40",
+"MAQ-TESTE-41","MAQ-TESTE-42","MAQ-TESTE-43","MAQ-TESTE-44","MAQ-TESTE-45","MAQ-TESTE-46","MAQ-TESTE-47","MAQ-TESTE-48","MAQ-TESTE-49","MAQ-TESTE-50",
+"MAQ-TESTE-51","MAQ-TESTE-52","MAQ-TESTE-53","MAQ-TESTE-54","MAQ-TESTE-55","MAQ-TESTE-56","MAQ-TESTE-57","MAQ-TESTE-58","MAQ-TESTE-59","MAQ-TESTE-60",
+"MAQ-TESTE-61","MAQ-TESTE-62","MAQ-TESTE-63","MAQ-TESTE-64","MAQ-TESTE-65","MAQ-TESTE-66","MAQ-TESTE-67","MAQ-TESTE-68","MAQ-TESTE-69","MAQ-TESTE-70",
+"MAQ-TESTE-71","MAQ-TESTE-72","MAQ-TESTE-73","MAQ-TESTE-74","MAQ-TESTE-75","MAQ-TESTE-76","MAQ-TESTE-77","MAQ-TESTE-78","MAQ-TESTE-79","MAQ-TESTE-80",
+"MAQ-TESTE-81","MAQ-TESTE-82","MAQ-TESTE-83","MAQ-TESTE-84","MAQ-TESTE-85","MAQ-TESTE-86","MAQ-TESTE-87","MAQ-TESTE-88","MAQ-TESTE-89","MAQ-TESTE-90",
+"MAQ-TESTE-91","MAQ-TESTE-92","MAQ-TESTE-93","MAQ-TESTE-94","MAQ-TESTE-95","MAQ-TESTE-96","MAQ-TESTE-97","MAQ-TESTE-98","MAQ-TESTE-99","MAQ-TESTE-100",
+"MAQ-TESTE-101","MAQ-TESTE-102","MAQ-TESTE-103","MAQ-TESTE-104","MAQ-TESTE-105","MAQ-TESTE-106","MAQ-TESTE-107","MAQ-TESTE-108","MAQ-TESTE-109","MAQ-TESTE-110",
+"MAQ-TESTE-111","MAQ-TESTE-112","MAQ-TESTE-113","MAQ-TESTE-114","MAQ-TESTE-115","MAQ-TESTE-116","MAQ-TESTE-117","MAQ-TESTE-118","MAQ-TESTE-119","MAQ-TESTE-120",
+"MAQ-TESTE-121","MAQ-TESTE-122","MAQ-TESTE-123","MAQ-TESTE-124","MAQ-TESTE-125","MAQ-TESTE-126","MAQ-TESTE-127","MAQ-TESTE-128","MAQ-TESTE-129","MAQ-TESTE-130",
+"MAQ-TESTE-131","MAQ-TESTE-132","MAQ-TESTE-133","MAQ-TESTE-134","MAQ-TESTE-135","MAQ-TESTE-136","MAQ-TESTE-137","MAQ-TESTE-138","MAQ-TESTE-139","MAQ-TESTE-140",
+"MAQ-TESTE-141","MAQ-TESTE-142","MAQ-TESTE-143","MAQ-TESTE-144","MAQ-TESTE-145","MAQ-TESTE-146","MAQ-TESTE-147","MAQ-TESTE-148","MAQ-TESTE-149","MAQ-TESTE-150",
+"MAQ-TESTE-151","MAQ-TESTE-152","MAQ-TESTE-153","MAQ-TESTE-154","MAQ-TESTE-155","MAQ-TESTE-156","MAQ-TESTE-157","MAQ-TESTE-158","MAQ-TESTE-159","MAQ-TESTE-160",
+"MAQ-TESTE-161","MAQ-TESTE-162","MAQ-TESTE-163","MAQ-TESTE-164","MAQ-TESTE-165","MAQ-TESTE-166","MAQ-TESTE-167","MAQ-TESTE-168","MAQ-TESTE-169","MAQ-TESTE-170",
+"MAQ-TESTE-171"
+
+    ];
+
+    function paginarMaquinas(listaCompleta, tamanhoPagina) {
+      const paginas = {};
+      for (let i = 0; i < listaCompleta.length; i += tamanhoPagina) {
+        const numeroPagina = (i / tamanhoPagina) + 1;
+        paginas[`Página ${numeroPagina}`] = listaCompleta.slice(i, i + tamanhoPagina);
+      }
+      return paginas;
+    }
+
+    const TAMANHO_DA_PAGINA = 25;
+    const maquinasPorPagina = paginarMaquinas(todasAsMaquinas, TAMANHO_DA_PAGINA);
+    const navButtonsEl = document.getElementById("nav-buttons");
+    const tabela = document.getElementById("tabela-maquinas");
+    const percentualEl = document.getElementById("percentual");
+    const tituloSecaoEl = document.getElementById("titulo-secao");
+
+    let manutencoes = JSON.parse(localStorage.getItem("manutencoes")) || {};
+
+    function verificarAlertas(inputHori, inputOleo1, inputOleo2) {
+      const horimetro = parseFloat(inputHori.value) || 0;
+      const oleo1 = parseFloat(inputOleo1.value) || 0;
+      const oleo2 = parseFloat(inputOleo2.value) || 0;
+
+      inputOleo1.classList.remove("alerta");
+      inputOleo2.classList.remove("alerta");
+
+      if (oleo1 > 0 && horimetro - oleo1 >= 6000) {
+        inputOleo1.classList.add("alerta");
+      }
+
+      if (oleo2 > 0 && horimetro - oleo2 >= 9000) {
+        inputOleo2.classList.add("alerta");
+      }
+    }
+
+    function renderizarTabela(nomePagina, listaFiltrada = null) {
+      tabela.innerHTML = "";
+      tituloSecaoEl.textContent = listaFiltrada ? "Resultado da pesquisa" : nomePagina;
+
+      const maquinas = listaFiltrada || maquinasPorPagina[nomePagina];
+      if (!maquinas) return;
+
+      maquinas.forEach(codigo => {
+        const row = document.createElement("tr");
+
+        const colCodigo = document.createElement("td");
+        colCodigo.textContent = codigo;
+
+        const colHori = document.createElement("td");
+        const inputHori = document.createElement("input");
+        inputHori.type = "number";
+        inputHori.classList.add("horimetro");
+        inputHori.value = manutencoes[codigo]?.horimetro || "";
+        colHori.appendChild(inputHori);
+
+        const colOS = document.createElement("td");
+        const inputOS = document.createElement("input");
+        inputOS.type = "text";
+        inputOS.classList.add("osNum");
+        inputOS.value = manutencoes[codigo]?.os || "";
+        colOS.appendChild(inputOS);
+
+        const colTec = document.createElement("td");
+        const inputTec = document.createElement("input");
+        inputTec.type = "text";
+        inputTec.classList.add("tecnico");
+        inputTec.value = manutencoes[codigo]?.tecnico || "";
+        colTec.appendChild(inputTec);
+
+        const colAcao = document.createElement("td");
+        const botao = document.createElement("button");
+        botao.classList.add("acao");
+
+        const colData = document.createElement("td");
+        const inputData = document.createElement("input");
+        inputData.type = "date";
+        inputData.classList.add("dataManut");
+        inputData.value = manutencoes[codigo]?.data || "";
+        colData.appendChild(inputData);
+
+        const colOleo1 = document.createElement("td");
+        const inputOleo1 = document.createElement("input");
+        inputOleo1.type = "number";
+        inputOleo1.classList.add("oleo");
+        inputOleo1.placeholder = "Horímetro";
+        inputOleo1.value = manutencoes[codigo]?.oleo1 || "";
+        colOleo1.appendChild(inputOleo1);
+
+        const colOleo2 = document.createElement("td");
+        const inputOleo2 = document.createElement("input");
+        inputOleo2.type = "number";
+        inputOleo2.classList.add("oleo");
+        inputOleo2.placeholder = "Horímetro";
+        inputOleo2.value = manutencoes[codigo]?.oleo2 || "";
+        colOleo2.appendChild(inputOleo2);
+
+        function atualizarBotao() {
+          botao.classList.remove("concluido", "a-realizar");
+          if (manutencoes[codigo]?.feito) {
+            botao.textContent = "Concluído";
+            botao.classList.add("concluido");
+          } else {
+            botao.textContent = "A Realizar";
+            botao.classList.add("a-realizar");
+          }
+        }
+
+        botao.addEventListener('click', () => {
+          if (!manutencoes[codigo]) manutencoes[codigo] = {};
+          if (!inputOS.value) {
+            alert("⚠ É obrigatório preencher o Nº da O.S antes de concluir!");
+            return;
+          }
+          manutencoes[codigo].feito = !manutencoes[codigo].feito;
+          if (manutencoes[codigo].feito) {
+            manutencoes[codigo].data = inputData.value || new Date().toISOString().split("T")[0];
+            manutencoes[codigo].horimetro = inputHori.value;
+            manutencoes[codigo].os = inputOS.value;
+            manutencoes[codigo].tecnico = inputTec.value;
+            manutencoes[codigo].oleo1 = inputOleo1.value;
+            manutencoes[codigo].oleo2 = inputOleo2.value;
+            inputData.value = manutencoes[codigo].data;
+          }
+          salvarStatus();
+          atualizarBotao();
+        });
+
+        [inputHori, inputOS, inputTec, inputData, inputOleo1, inputOleo2].forEach(el => {
+          el.addEventListener("change", () => {
+            if (!manutencoes[codigo]) manutencoes[codigo] = {};
+            manutencoes[codigo].horimetro = inputHori.value;
+            manutencoes[codigo].os = inputOS.value;
+            manutencoes[codigo].tecnico = inputTec.value;
+            manutencoes[codigo].data = inputData.value;
+            manutencoes[codigo].oleo1 = inputOleo1.value;
+            manutencoes[codigo].oleo2 = inputOleo2.value;
+            salvarStatus();
+            verificarAlertas(inputHori, inputOleo1, inputOleo2);
+          });
+        });
+
+        atualizarBotao();
+        verificarAlertas(inputHori, inputOleo1, inputOleo2);
+
+        colAcao.appendChild(botao);
+        row.appendChild(colCodigo);
+        row.appendChild(colHori);
+        row.appendChild(colOS);
+        row.appendChild(colTec);
+        row.appendChild(colAcao);
+        row.appendChild(colData);
+        row.appendChild(colOleo1);
+        row.appendChild(colOleo2);
+        tabela.appendChild(row);
+      });
+
+      document.querySelectorAll('.nav-buttons button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === nomePagina);
+      });
+    }
+
+    function criarNavegacao() {
+      Object.keys(maquinasPorPagina).forEach(nomePagina => {
+        const button = document.createElement('button');
+        button.textContent = nomePagina;
+        button.addEventListener('click', () => renderizarTabela(nomePagina));
+        navButtonsEl.appendChild(button);
+      });
+    }
+
+    function salvarStatus() {
+      localStorage.setItem("manutencoes", JSON.stringify(manutencoes));
+      atualizarPercentual();
+    }
+
+    function novaCompetencia() {
+      if (confirm("Tem certeza que deseja iniciar um NOVO MÊS? Isso vai apagar todos os registros!")) {
+        localStorage.removeItem("manutencoes");
+        location.reload();
+      }
+    }
+
+    function atualizarPercentual() {
+      const totalMaquinas = todasAsMaquinas.length;
+      const feitos = Object.values(manutencoes).filter(m => m.feito).length;
+      const perc = totalMaquinas > 0 ? ((feitos / totalMaquinas) * 100).toFixed(1) : 0;
+      percentualEl.textContent = `Preventivas concluídas: ${perc}%`;
+    }
+
+    function exportarExcel() {
+      const dados = [["Código da Máquina", "Horímetro", "Nº O.S.", "Técnico", "Status", "Data", "Troca Óleo 01", "Troca Óleo 02"]];
+      todasAsMaquinas.forEach(codigo => {
+        const registro = manutencoes[codigo] || {};
+        dados.push([
+          codigo,
+          registro.horimetro || "",
+          registro.os || "",
+          registro.tecnico || "",
+          registro.feito ? "Concluído" : "A Realizar",
+          registro.data || "",
+          registro.oleo1 || "",
+          registro.oleo2 || ""
+        ]);
+      });
+      const ws = XLSX.utils.aoa_to_sheet(dados);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Manutenção");
+      XLSX.writeFile(wb, "controle_manutencao.xlsx");
+    }
+
+    function filtrarTabela() {
+      const termo = document.getElementById("pesquisa").value.toLowerCase();
+      if (!termo) {
+        const primeiraPagina = Object.keys(maquinasPorPagina)[0];
+        if (primeiraPagina) renderizarTabela(primeiraPagina);
+        return;
+      }
+
+      const listaFiltrada = todasAsMaquinas.filter(codigo => {
+        const reg = manutencoes[codigo] || {};
+        return codigo.toLowerCase().includes(termo) || (reg.tecnico || "").toLowerCase().includes(termo);
+      });
+
+      renderizarTabela(null, listaFiltrada);
+    }
+
+    criarNavegacao();
+    const primeiraPagina = Object.keys(maquinasPorPagina)[0];
+    if (primeiraPagina) renderizarTabela(primeiraPagina);
+    atualizarPercentual();
+  </script>
+</body>
+</html>
