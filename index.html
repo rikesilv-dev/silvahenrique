@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Controle de Manutenção</title>
   <style>
     body {
@@ -19,58 +19,50 @@
       background:url("https://media.licdn.com/dms/image/v2/D4D3DAQG21eNJpdZ0fQ/image-scale_191_1128/image-scale_191_1128/0/1732309685171/still_brasil_empilhadeira_cover?e=2147483647&v=beta&t=lLD15uNZ1WRKFjW-X3OE3VjEGt0EwBl6topHrsMkxDU") no-repeat center center;
       color: white;
       text-align: center;
-      padding: 50px 30px;
+      padding: 30px 120px;
     }
-    header h1 {
-      margin: 0;
-    }
+    header h1 { margin: 0; }
     main {
       flex: 1;
-      padding: 20px;
-      max-width: 1200px;
+      padding: 3px;
+      max-width: 1288px;
       margin: auto;
       background: white;
-      border-radius: 10px;
+      border-radius: 5px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h2, h5 {
-      text-align: center;
-    }
+    h2, h5 { text-align: center; }
     .top-actions {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       flex-wrap: wrap;
       gap: 10px;
     }
     .reset-btn, .export-btn {
-      padding: 8px 15px;
-      background: #3498db;
+      padding: 6px 10px;
+      background: #34db34;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      font-size: 12px;
     }
     .reset-btn { background: #e67e22; }
     .reset-btn:hover { background: #d35400; }
     .export-btn:hover { background: #2980b9; }
-    .percentual {
-      font-weight: bold;
-      font-size: 1.1em;
-      color: #2c3e50;
-    }
+    .percentual { font-weight: bold; font-size: 1.1em; color: #2c3e50; }
     .nav-buttons {
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 5px;
         flex-wrap: wrap;
         display: flex;
         justify-content: center;
         gap: 5px;
     }
     .nav-buttons button {
-        padding: 10px 15px;
-        margin: 0;
+        padding: 8px 10px;
         border-radius: 5px;
         border: 1px solid #ddd;
         background: #f0f0f0;
@@ -84,40 +76,50 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
+      margin-top: 25px;
+      table-layout: auto; /* manter comportamento natural */
     }
     th, td {
       padding: 10px;
       border: 1px solid #ddd;
       text-align: center;
+      vertical-align: middle;
     }
-    th {
-      background: #2c3e50;
-      color: white;
-    }
+    th { background: #1b232b; color: white; }
     button.acao {
       color: white;
       border: none;
-      padding: 8px 14px;
+      padding: 5px 14px;
       cursor: pointer;
-      border-radius: 5px;
+      border-radius: 1px;
       font-weight: bold;
-      width: 120px;
-      transition: background 0.3s;
+      width: 100px;
     }
     button.acao.concluido { background: #2ecc71; }
     button.acao.a-realizar { background: #cf1602; }
 
-    input.horimetro, input.dataManut, input.osNum, input.tecnico, input.oleo {
-      width: 120px;
-      padding: 5px;
+    /* ajustes de largura dos inputs */
+    input.horimetro, input.dataManut, input.oleo {
+      width: 100px;
+      padding: 3px;
       text-align: center;
     }
 
-    .pesquisa {
-      margin: 10px 0;
+    /* Nº O.S.: maior, fonte monoespaçada e auto-resize via JS */
+    input.osNum {
+      min-width: 180px;    /* mínimo */
+      max-width: 300px;    /* limite para não destruir layout */
+      padding: 6px;
       text-align: center;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 13px;
+      box-sizing: content-box; /* para facilitar ajuste por JS */
     }
+
+    /* aumentar a largura da coluna (sugestão, pode ajustar) */
+    th:nth-child(3), td:nth-child(3) { width: 100px; }
+
+    .pesquisa { margin: 10px 0; text-align: center; }
     .pesquisa input {
       width: 70%;
       padding: 8px;
@@ -126,23 +128,10 @@
     }
 
     /* ALERTA DE ÓLEO */
-    .alerta {
-      background-color: #e74c3c !important;
-      color: white !important;
-      font-weight: bold;
-      th:nth-child(1), td:nth-child(1) { min-width: 800px; } /* Código da Máquina */
- 
+    .alerta { background-color: #e74c3c !important; color: white !important; font-weight: bold; }
 
-      th:nth-child(1), td:nth-child(1) { min-width: 800px; } /* Código da Máquina */
-th:nth-child(2), td:nth-child(2) { width: 120px; }     /* Horímetro */
-th:nth-child(3), td:nth-child(3) { width: 100px; }     /* Nº O.S. */
-th:nth-child(4), td:nth-child(4) { width: 150px; }     /* Técnico */
-th:nth-child(5), td:nth-child(5) { width: 130px; }     /* Ação */
-th:nth-child(6), td:nth-child(6) { width: 120px; }     /* Data */
-th:nth-child(7), td:nth-child(7) { width: 130px; }     /* Troca de Óleo 01 */
-th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
-
-    }
+    /* ALERTA DE ATRASO */
+    .atrasado { background-color: yellow !important; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -158,24 +147,31 @@ th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
     </div>
 
     <div class="pesquisa">
-      <input type="text" id="pesquisa" placeholder="🔍 Pesquisar por Máquina ou Técnico..." onkeyup="filtrarTabela()">
+      <input type="text" id="pesquisa" placeholder="🔍 Pesquisar por Máquina..." onkeyup="filtrarTabela()">
     </div>
 
     <div class="nav-buttons" id="nav-buttons"></div>
-
     <h2 id="titulo-secao"></h2>
     <h5>Desenvolvido Por Henrique Silva</h5>
+    <h6> Email: Henrique.silva@kiongroup.com </h6>
     <table>
       <thead>
         <tr>
-          <th>Código da Máquina</th>
+          <th>SERIE / MODELO</th>
           <th>Horímetro</th>
           <th>Nº O.S.</th>
-          <th>Técnico</th>
           <th>Ação</th>
           <th>Data</th>
           <th>Troca de Óleo 01</th>
           <th>Troca de Óleo 02</th>
+          <th>
+            Data Anterior <br>
+            <button class="reset-btn" onclick="limparDataAnteriorAtrasados()"> 🗑 Limpar Atrasados</button>
+          </th>
+          <th>
+            Dias Faltantes <br>
+            <button class="reset-btn" onclick="limparDiasFaltantesAtrasados()"> 🗑 Limpar Atrasados</button>
+          </th>
         </tr>
       </thead>
       <tbody id="tabela-maquinas"></tbody>
@@ -185,38 +181,60 @@ th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <script>
-    const todasAsMaquinas = [
+     const todasAsMaquinas = [
+      //MAQUINAS HENRIQUE
       "341930Y04383 FMX","341930Y04388 FMX","341930Y04390 FMX","341930Y04392 FMX","341930Y04394 FMX",
       "341930Y04470 FMX","341930Y04480 FMX","340139Y02015 ERX","340139Y02017 ERX","340139Y02022 ERX",
       "340139Y02129 ERX","340139Y02156 ERX","340139Y02158 ERX","340139Y02165 ERX","340139Y02185 ERX",
       "340139Y02192 ERX","340139Y02205 ERX","341033E01096 ERX","348044Y01131 GLP","348044Y01132 GLP",
-      "348044Y01130 GLP","340129E03260 EGU","MAQ-TESTE-01","MAQ-TESTE-02","MAQ-TESTE-03","MAQ-TESTE-04"
-      ,"MAQ-TESTE-05","MAQ-TESTE-06","MAQ-TESTE-07","MAQ-TESTE-08","MAQ-TESTE-09","MAQ-TESTE-10","MAQ-TESTE-11","MAQ-TESTE-12","MAQ-TESTE-13","MAQ-TESTE-14"
-      ,"MAQ-TESTE-15","MAQ-TESTE-16","MAQ-TESTE-17","MAQ-TESTE-18","MAQ-TESTE-19","MAQ-TESTE-20",
-"MAQ-TESTE-21","MAQ-TESTE-22","MAQ-TESTE-23","MAQ-TESTE-24","MAQ-TESTE-25","MAQ-TESTE-26","MAQ-TESTE-27","MAQ-TESTE-28","MAQ-TESTE-29","MAQ-TESTE-30",
-"MAQ-TESTE-31","MAQ-TESTE-32","MAQ-TESTE-33","MAQ-TESTE-34","MAQ-TESTE-35","MAQ-TESTE-36","MAQ-TESTE-37","MAQ-TESTE-38","MAQ-TESTE-39","MAQ-TESTE-40",
-"MAQ-TESTE-41","MAQ-TESTE-42","MAQ-TESTE-43","MAQ-TESTE-44","MAQ-TESTE-45","MAQ-TESTE-46","MAQ-TESTE-47","MAQ-TESTE-48","MAQ-TESTE-49","MAQ-TESTE-50",
-"MAQ-TESTE-51","MAQ-TESTE-52","MAQ-TESTE-53","MAQ-TESTE-54","MAQ-TESTE-55","MAQ-TESTE-56","MAQ-TESTE-57","MAQ-TESTE-58","MAQ-TESTE-59","MAQ-TESTE-60",
-"MAQ-TESTE-61","MAQ-TESTE-62","MAQ-TESTE-63","MAQ-TESTE-64","MAQ-TESTE-65","MAQ-TESTE-66","MAQ-TESTE-67","MAQ-TESTE-68","MAQ-TESTE-69","MAQ-TESTE-70",
-"MAQ-TESTE-71","MAQ-TESTE-72","MAQ-TESTE-73","MAQ-TESTE-74","MAQ-TESTE-75","MAQ-TESTE-76","MAQ-TESTE-77","MAQ-TESTE-78","MAQ-TESTE-79","MAQ-TESTE-80",
-"MAQ-TESTE-81","MAQ-TESTE-82","MAQ-TESTE-83","MAQ-TESTE-84","MAQ-TESTE-85","MAQ-TESTE-86","MAQ-TESTE-87","MAQ-TESTE-88","MAQ-TESTE-89","MAQ-TESTE-90",
-"MAQ-TESTE-91","MAQ-TESTE-92","MAQ-TESTE-93","MAQ-TESTE-94","MAQ-TESTE-95","MAQ-TESTE-96","MAQ-TESTE-97","MAQ-TESTE-98","MAQ-TESTE-99","MAQ-TESTE-100",
-"MAQ-TESTE-101","MAQ-TESTE-102","MAQ-TESTE-103","MAQ-TESTE-104","MAQ-TESTE-105","MAQ-TESTE-106","MAQ-TESTE-107","MAQ-TESTE-108","MAQ-TESTE-109","MAQ-TESTE-110",
-"MAQ-TESTE-111","MAQ-TESTE-112","MAQ-TESTE-113","MAQ-TESTE-114","MAQ-TESTE-115","MAQ-TESTE-116","MAQ-TESTE-117","MAQ-TESTE-118","MAQ-TESTE-119","MAQ-TESTE-120",
-"MAQ-TESTE-121","MAQ-TESTE-122","MAQ-TESTE-123","MAQ-TESTE-124","MAQ-TESTE-125","MAQ-TESTE-126","MAQ-TESTE-127","MAQ-TESTE-128","MAQ-TESTE-129","MAQ-TESTE-130",
-"MAQ-TESTE-131","MAQ-TESTE-132","MAQ-TESTE-133","MAQ-TESTE-134","MAQ-TESTE-135","MAQ-TESTE-136","MAQ-TESTE-137","MAQ-TESTE-138","MAQ-TESTE-139","MAQ-TESTE-140",
-"MAQ-TESTE-141","MAQ-TESTE-142","MAQ-TESTE-143","MAQ-TESTE-144","MAQ-TESTE-145","MAQ-TESTE-146","MAQ-TESTE-147","MAQ-TESTE-148","MAQ-TESTE-149","MAQ-TESTE-150",
-"MAQ-TESTE-151","MAQ-TESTE-152","MAQ-TESTE-153","MAQ-TESTE-154","MAQ-TESTE-155","MAQ-TESTE-156","MAQ-TESTE-157","MAQ-TESTE-158","MAQ-TESTE-159","MAQ-TESTE-160",
-"MAQ-TESTE-161","MAQ-TESTE-162","MAQ-TESTE-163","MAQ-TESTE-164","MAQ-TESTE-165","MAQ-TESTE-166","MAQ-TESTE-167","MAQ-TESTE-168","MAQ-TESTE-169","MAQ-TESTE-170",
-"MAQ-TESTE-171"
-
+      "348044Y01130 GLP","340129E03260 EGU","PARA ATRIBUIR","PARA ATRIBUIR","PARA ATRIBUIR",
+      // MAQUINAS JUNIOR
+      "341930Y04218 FMX G1600 9800","341930Y04266 FMX G1600 9800 BLACK","341930Y04267 FMX G1600 9800 BLACK ",
+      "341930Y04375 FMX","341930Y04386 FMX G1800 11600","341930Y04387 FMX G1200 11600","341930Y04389 FMX G1200 11600",
+      "341930Y04401 FMX G1200 11600","341930Y04431 FMX G1800 9800","340139Y01996 ERX 27","340139Y01968 ERX27 ","340139Y01969 ERX27 ",
+      "340139Y01991 ERX 27 ","340139Y02046 ERX 27","340139Y02060 ERX 27","340139Y02070 ERX 27","340139Y02113 ERX 27",
+      "340139Y02115 ERX 27 ","340139Y02133 ERX 27 1800mm","340139Y02160 ERX 27 BLACK ","340139Y02191 ERX 27 DAT","348104J00446 EGU20",
+       //MAQUINAS LEONARDO
+      "MAQ-TESTE-26","MAQ-TESTE-27","MAQ-TESTE-28","341930Y04213 FMX G1600 9800","341930Y04272 FMX G1600 9800 BLACK",
+      "341930Y04273 FMX G1600 9800 BLACK","341930Y04274 G1600 9800 BLACK","341930Y04472 FMX G1200 11600","341930Y04473 FMX G1200 11600",
+      "341930Y04475 FMX G1200 11600","341930Y04476 FMX G1200 11600","341930Y04478 FMX G1200 11600","341930Y04479 FMX G1200 11600 DAT",
+      "340139Y01970 ERX 27","340139Y01971 ERX 27","340139Y02084 ERX 27","340139Y01992 ERX 27","340139Y02014 ERX 27",
+      "340139Y02021 ERX 27","340139Y02025 ERX 27","340139Y02026 ERX 27","340139Y02047 ERX 27","340139Y02059 ERX 27",
+      "340139Y02077 ERX 27 BLACK","340139Y02082 ERX 27",
+       // MAQUINAS LUCAS
+       "MAQ-TESTE-51","MAQ-TESTE-52","MAQ-TESTE-53","341930Y03552 FMX G1200 11600 DAT3 ","341930Y04247 FMX G1600 9800","341930Y04259 FMX G1200 11600 DAT3","341930Y04276 FMX G1600 9800 BLACK","341930Y04277 FMX G1600 9800 BLACK","341930Y04293 FMX G1800 11600 DAT3","341930Y04447 FMX G1800 9800",
+       "340139Y02011 ERX 27 SUP","340139Y02034 ERX 27 BLACK","340139Y02035 ERX 27 BLACK","340139Y02044 ERX 27","340139Y02045 ERX 27","340139Y02062 ERX 27","340139Y02080 ERX 27",
+       "340139Y02125 ERX27 1800mm DAT3","340139Y02132 ERX27 1800mm DAT3","340139Y02135 ERX27 1800mm DAT3","340139Y02159 ERX 27","340139Y02166 ERX27 1800mm DAT3 ","340139Y02173 ERX27 1800mm DAT3","340261Y06099 EGV-16 DAT3",
+       "340261Y06100 EGV-16 DAT3","340261Y06096 EGV-16 5466 SUP","340261Y06094 EGV-16 5466 SUP",
+       "MAQ-TESTE-78",
+       // MAQUINAS LUIZ
+       "341930Y04217","341930Y04243","341930Y04244","341930Y04245","341930Y04270","341930Y04396","341930Y04402",
+       "341930Y04485","340139Y02075","340139Y02096","340139Y02104","340139Y02112","340139Y02119","340139Y02127",
+       "340139Y02137","340139Y02138","340139Y02140","340139Y02149","340139Y02152","340139Y02157","340139Y02213",
+       "340261Y06095","341033E01098",
     ];
+
+    // Nomes personalizados para até 10 páginas
+const nomesPaginas = [
+  "Henrique",   // Página 1
+  "Junior",     // Página 2
+  "Leonardo",   // Página 3
+  "Lucas",      // Página 4
+  "Luiz",       // Página 5
+  "Paulo",      // Página 6
+  "Carlos",     // Página 7
+  "Marcos",     // Página 8
+  "André",      // Página 9
+  "Pedro"       // Página 10
+  ];
+    const SENHA = "1234";
 
     function paginarMaquinas(listaCompleta, tamanhoPagina) {
       const paginas = {};
       for (let i = 0; i < listaCompleta.length; i += tamanhoPagina) {
-        const numeroPagina = (i / tamanhoPagina) + 1;
-        paginas[`Página ${numeroPagina}`] = listaCompleta.slice(i, i + tamanhoPagina);
+        const numeroPagina = (i / tamanhoPagina);
+        const nomePagina = nomesPaginas[numeroPagina] || `Página ${numeroPagina+1}`;
+        paginas[nomePagina] = listaCompleta.slice(i, i + tamanhoPagina);
       }
       return paginas;
     }
@@ -230,21 +248,13 @@ th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
 
     let manutencoes = JSON.parse(localStorage.getItem("manutencoes")) || {};
 
-    function verificarAlertas(inputHori, inputOleo1, inputOleo2) {
-      const horimetro = parseFloat(inputHori.value) || 0;
-      const oleo1 = parseFloat(inputOleo1.value) || 0;
-      const oleo2 = parseFloat(inputOleo2.value) || 0;
-
-      inputOleo1.classList.remove("alerta");
-      inputOleo2.classList.remove("alerta");
-
-      if (oleo1 > 0 && horimetro - oleo1 >= 6000) {
-        inputOleo1.classList.add("alerta");
-      }
-
-      if (oleo2 > 0 && horimetro - oleo2 >= 9000) {
-        inputOleo2.classList.add("alerta");
-      }
+    /* função que ajusta a largura do input OS conforme conteúdo */
+    function ajustarWidthOS(input) {
+      try {
+        const len = input.value ? input.value.length : 0;
+        const px = Math.max(160, Math.min(420, 8 + len * 8)); // calcula largura (limites)
+        input.style.width = px + 'px';
+      } catch (e) { /* silencioso */ }
     }
 
     function renderizarTabela(nomePagina, listaFiltrada = null) {
@@ -272,14 +282,14 @@ th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
         inputOS.type = "text";
         inputOS.classList.add("osNum");
         inputOS.value = manutencoes[codigo]?.os || "";
+        inputOS.title = inputOS.value || ""; // tooltip com valor completo
+        ajustarWidthOS(inputOS); // ajusta largura inicial
+        // atualiza título e largura enquanto digita
+        inputOS.addEventListener('input', () => {
+          inputOS.title = inputOS.value;
+          ajustarWidthOS(inputOS);
+        });
         colOS.appendChild(inputOS);
-
-        const colTec = document.createElement("td");
-        const inputTec = document.createElement("input");
-        inputTec.type = "text";
-        inputTec.classList.add("tecnico");
-        inputTec.value = manutencoes[codigo]?.tecnico || "";
-        colTec.appendChild(inputTec);
 
         const colAcao = document.createElement("td");
         const botao = document.createElement("button");
@@ -296,7 +306,6 @@ th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
         const inputOleo1 = document.createElement("input");
         inputOleo1.type = "number";
         inputOleo1.classList.add("oleo");
-        inputOleo1.placeholder = "Horímetro";
         inputOleo1.value = manutencoes[codigo]?.oleo1 || "";
         colOleo1.appendChild(inputOleo1);
 
@@ -304,9 +313,27 @@ th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
         const inputOleo2 = document.createElement("input");
         inputOleo2.type = "number";
         inputOleo2.classList.add("oleo");
-        inputOleo2.placeholder = "Horímetro";
         inputOleo2.value = manutencoes[codigo]?.oleo2 || "";
         colOleo2.appendChild(inputOleo2);
+
+        const colDataAnterior = document.createElement("td");
+        colDataAnterior.textContent = manutencoes[codigo]?.dataAnterior || "-";
+
+        const colDias = document.createElement("td");
+        if (manutencoes[codigo]?.dataAnterior) {
+          const dataAnt = new Date(manutencoes[codigo].dataAnterior);
+          const hoje = new Date();
+          const diff = Math.floor((hoje - dataAnt) / (1000 * 60 * 60 * 24));
+          const faltam = 30 - diff;
+          if (faltam > 0) {
+            colDias.textContent = `${faltam} dias`;
+          } else {
+            colDias.textContent = "⚠ Atrasado";
+            colDias.classList.add("atrasado");
+          }
+        } else {
+          colDias.textContent = "-";
+        }
 
         function atualizarBotao() {
           botao.classList.remove("concluido", "a-realizar");
@@ -330,7 +357,6 @@ th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
             manutencoes[codigo].data = inputData.value || new Date().toISOString().split("T")[0];
             manutencoes[codigo].horimetro = inputHori.value;
             manutencoes[codigo].os = inputOS.value;
-            manutencoes[codigo].tecnico = inputTec.value;
             manutencoes[codigo].oleo1 = inputOleo1.value;
             manutencoes[codigo].oleo2 = inputOleo2.value;
             inputData.value = manutencoes[codigo].data;
@@ -339,37 +365,33 @@ th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
           atualizarBotao();
         });
 
-        [inputHori, inputOS, inputTec, inputData, inputOleo1, inputOleo2].forEach(el => {
+        [inputHori, inputOS, inputData, inputOleo1, inputOleo2].forEach(el => {
           el.addEventListener("change", () => {
             if (!manutencoes[codigo]) manutencoes[codigo] = {};
             manutencoes[codigo].horimetro = inputHori.value;
             manutencoes[codigo].os = inputOS.value;
-            manutencoes[codigo].tecnico = inputTec.value;
             manutencoes[codigo].data = inputData.value;
             manutencoes[codigo].oleo1 = inputOleo1.value;
             manutencoes[codigo].oleo2 = inputOleo2.value;
+            // atualiza título e largura ao salvar/alterar
+            inputOS.title = inputOS.value;
+            ajustarWidthOS(inputOS);
             salvarStatus();
-            verificarAlertas(inputHori, inputOleo1, inputOleo2);
           });
         });
 
         atualizarBotao();
-        verificarAlertas(inputHori, inputOleo1, inputOleo2);
-
         colAcao.appendChild(botao);
         row.appendChild(colCodigo);
         row.appendChild(colHori);
         row.appendChild(colOS);
-        row.appendChild(colTec);
         row.appendChild(colAcao);
         row.appendChild(colData);
         row.appendChild(colOleo1);
         row.appendChild(colOleo2);
+        row.appendChild(colDataAnterior);
+        row.appendChild(colDias);
         tabela.appendChild(row);
-      });
-
-      document.querySelectorAll('.nav-buttons button').forEach(btn => {
-        btn.classList.toggle('active', btn.textContent === nomePagina);
       });
     }
 
@@ -388,8 +410,22 @@ th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
     }
 
     function novaCompetencia() {
-      if (confirm("Tem certeza que deseja iniciar um NOVO MÊS? Isso vai apagar todos os registros!")) {
-        localStorage.removeItem("manutencoes");
+      const senha = prompt("Digite a senha para iniciar um NOVO MÊS:");
+      if (senha !== SENHA) {
+        alert("❌ Senha incorreta. Operação cancelada!");
+        return;
+      }
+      if (confirm("Tem certeza que deseja iniciar um NOVO MÊS?")) {
+        Object.keys(manutencoes).forEach(codigo => {
+          const reg = manutencoes[codigo];
+          if (reg.feito) {
+            manutencoes[codigo].dataAnterior = reg.data || "";
+          }
+          manutencoes[codigo].horimetro = "";
+          manutencoes[codigo].os = "";
+          manutencoes[codigo].feito = false;
+        });
+        salvarStatus();
         location.reload();
       }
     }
@@ -402,18 +438,26 @@ th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
     }
 
     function exportarExcel() {
-      const dados = [["Código da Máquina", "Horímetro", "Nº O.S.", "Técnico", "Status", "Data", "Troca Óleo 01", "Troca Óleo 02"]];
+      const dados = [["Código da Máquina", "Horímetro", "Nº O.S.", "Status", "Data", "Troca Óleo 01", "Troca Óleo 02", "Data Anterior", "Dias Faltantes"]];
       todasAsMaquinas.forEach(codigo => {
         const registro = manutencoes[codigo] || {};
+        let diasFaltando = "";
+        if (registro.dataAnterior) {
+          const dataAnt = new Date(registro.dataAnterior);
+          const hoje = new Date();
+          const diff = Math.floor((hoje - dataAnt) / (1000 * 60 * 60 * 24));
+          diasFaltando = diff < 30 ? `${30 - diff} dias` : "⚠ Atrasado";
+        }
         dados.push([
           codigo,
           registro.horimetro || "",
           registro.os || "",
-          registro.tecnico || "",
           registro.feito ? "Concluído" : "A Realizar",
           registro.data || "",
           registro.oleo1 || "",
-          registro.oleo2 || ""
+          registro.oleo2 || "",
+          registro.dataAnterior || "",
+          diasFaltando
         ]);
       });
       const ws = XLSX.utils.aoa_to_sheet(dados);
@@ -429,13 +473,43 @@ th:nth-child(8), td:nth-child(8) { width: 130px; }     /* Troca de Óleo 02 */
         if (primeiraPagina) renderizarTabela(primeiraPagina);
         return;
       }
-
-      const listaFiltrada = todasAsMaquinas.filter(codigo => {
-        const reg = manutencoes[codigo] || {};
-        return codigo.toLowerCase().includes(termo) || (reg.tecnico || "").toLowerCase().includes(termo);
-      });
-
+      const listaFiltrada = todasAsMaquinas.filter(codigo => codigo.toLowerCase().includes(termo));
       renderizarTabela(null, listaFiltrada);
+    }
+
+    // limpar atrasados (mantive as funções que você já tinha)
+    function limparDataAnteriorAtrasados() {
+      const senha = prompt("Digite a senha para LIMPAR as Datas Anteriores ATRASADAS:");
+      if (senha !== SENHA) { alert("❌ Senha incorreta. Operação cancelada!"); return; }
+      if (!confirm("Tem certeza que deseja apagar apenas as Datas Anteriores ATRASADAS?")) return;
+      Object.keys(manutencoes).forEach(codigo => {
+        const reg = manutencoes[codigo];
+        if (reg && reg.dataAnterior) {
+          const dataAnt = new Date(reg.dataAnterior);
+          const hoje = new Date();
+          const diff = Math.floor((hoje - dataAnt) / (1000 * 60 * 60 * 24));
+          if (diff >= 30) manutencoes[codigo].dataAnterior = "";
+        }
+      });
+      salvarStatus();
+      location.reload();
+    }
+
+    function limparDiasFaltantesAtrasados() {
+      const senha = prompt("Digite a senha para LIMPAR os Dias Faltantes ATRASADOS:");
+      if (senha !== SENHA) { alert("❌ Senha incorreta. Operação cancelada!"); return; }
+      if (!confirm("Tem certeza que deseja apagar apenas os Dias Faltantes ATRASADOS?")) return;
+      Object.keys(manutencoes).forEach(codigo => {
+        const reg = manutencoes[codigo];
+        if (reg && reg.dataAnterior) {
+          const dataAnt = new Date(reg.dataAnterior);
+          const hoje = new Date();
+          const diff = Math.floor((hoje - dataAnt) / (1000 * 60 * 60 * 24));
+          if (diff >= 30) manutencoes[codigo].dataAnterior = "";
+        }
+      });
+      salvarStatus();
+      location.reload();
     }
 
     criarNavegacao();
